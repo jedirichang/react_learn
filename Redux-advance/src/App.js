@@ -1,9 +1,13 @@
-import Counter from './components/Counter';
-
+import Cart from './components/Cart/Cart';
+import Layout from './components/Layout/Layout';
+import Products from './components/Shop/Products';
 
 function App() {
   return (
-    <Counter />
+    <Layout>
+      <Cart />
+      <Products />
+    </Layout>
   );
 }
 

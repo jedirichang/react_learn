@@ -1,16 +1,22 @@
 import ProductItem from './ProductItem';
 import classes from './Products.module.css';
+import { useSelector } from 'react-redux';
 
 const Products = (props) => {
+  const meals = useSelector(state => state.meals.items);
+  console.log(meals);
   return (
     <section className={classes.products}>
       <h2>Buy your favorite products</h2>
       <ul>
-        <ProductItem
-          title='Test'
-          price={6}
-          description='This is a first product - amazing!'
-        />
+        {meals.map(meal => <ProductItem
+          key={meal.id}
+          id={meal.id}
+          title={meal.name}
+          price={meal.price}
+          description={meal.description}
+        />)}
+
       </ul>
     </section>
   );
