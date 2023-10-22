@@ -11,7 +11,7 @@ import { useCreateCabin } from "./useCreateCabin";
 
 
 
-function CreateCabinForm({ cabinToEdit = {} }) {
+function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
 
   const { id: editId, ...editValue } = cabinToEdit;
 
@@ -28,7 +28,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
   const onSubmit = (data) => {
     createCabin({ ...data }, {
       onSuccess: (data) => {
-        console.log(data);
+        onCloseModal?.();
         reset();
       }
     });
@@ -88,7 +88,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button onClick={() => onCloseModal?.()} variation="secondary" type="reset">
           Cancel
         </Button>
         <Button disabled={isCreating}>{isEditSession ? 'Edit Cabin' : 'Create New Cabin'}</Button>
