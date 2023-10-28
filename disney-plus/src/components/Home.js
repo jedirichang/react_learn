@@ -1,9 +1,18 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { setMovies } from "../features/movie/moviesSlice";
 import ImageSlider from "./ImageSlider";
 import Movies from "./Movies";
 import Viewers from "./Viewers";
+import { thunks } from "../features/movie/moviesSlice";
 
 function Home() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(thunks.fetchMoviesThunk());
+  }, []);
+
   return (
     <Container>
       <ImageSlider />

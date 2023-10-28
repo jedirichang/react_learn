@@ -1,22 +1,22 @@
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { selectMovies } from "../features/movie/moviesSlice";
 
 function Movies() {
+  const { movies, isLoading } = useSelector(selectMovies).movie;
+  console.log(movies);
   return (
     <Container>
       <h4>Recommended For You</h4>
       <Content>
-        <Wrap>
-          <img src="https://picsum.photos/200/300" />
-        </Wrap>
-        <Wrap>
-          <img src="https://picsum.photos/200/300" />
-        </Wrap>
-        <Wrap>
-          <img src="https://picsum.photos/200/300" />
-        </Wrap>
-        <Wrap>
-          <img src="https://picsum.photos/200/300" />
-        </Wrap>
+        {!isLoading &&
+          movies &&
+          movies.length &&
+          movies.map((movie) => (
+            <Wrap key={movie.id}>
+              <img src={movie.cardImg} />
+            </Wrap>
+          ))}
       </Content>
     </Container>
   );
