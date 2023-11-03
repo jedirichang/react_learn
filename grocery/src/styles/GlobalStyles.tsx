@@ -56,7 +56,9 @@ const GlobalStyles = createGlobalStyle`
   --image-opacity: 100%;
 
   --font-heading1:25px;
-  --font-weight-heading1:600
+  --font-weight-heading1:600;
+
+--font-weight-heading2:600;
 }
 
 *,

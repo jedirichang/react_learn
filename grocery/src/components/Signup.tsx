@@ -1,11 +1,14 @@
 import { styled } from "styled-components";
 import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 function Signup() {
   return (
     <Container>
       <Title>SIGN UP</Title>
       <Input label="Email" />
+      <Input label="Password" type="password" />
+      <StyledButton />
     </Container>
   );
 }
@@ -26,3 +29,7 @@ const Title = styled.div`
   font-weight: var(--font-weight-heading1);
   letter-spacing: 5px;
 `;
+
+const StyledButton = styled(Button)`
+  margin-top: 20px;
+`
