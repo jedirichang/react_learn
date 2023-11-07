@@ -1,21 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
-import { removeAuth } from "../store/auth.store";
+import { useAppSelector } from "../hooks/store.hook";
 import Button from "../ui/Button";
+import { useLocalStorageState } from "../hooks/localStorage.hook";
 
 const Dashboard = () => {
   const auth = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { setValue } = useLocalStorageState(null, 'auth')
   const handleClick = () => {
-    dispatch(removeAuth());
+    setValue('');
     navigate("/auth");
   };
 
   return (
     <>
-      {auth.name} | {auth.email}
-      <br />
+      {auth.userInfo?.email}
       <Button onClick={handleClick}>Log Out</Button>;
     </>
   );

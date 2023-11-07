@@ -4,7 +4,8 @@ import Input from "../ui/Input";
 import Button from "../ui/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
-import { setAuth } from "../store/auth.store";
+import { AuthState, signupUser } from "../store/auth.store";
+import { useLocalStorageState } from "../hooks/localStorage.hook";
 
 interface IFormSignup {
   email: string;
@@ -20,16 +21,21 @@ function Signup() {
     formState: { isValid, errors },
   } = useForm<IFormSignup>({ mode: "onTouched" });
 
-  const auth = useAppSelector((state) => state.auth);
+  const auth: AuthState = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
+  const { setValue } = useLocalStorageState(auth.userInfo, 'auth');
+
+
   console.log(errors);
   const onSubmit: SubmitHandler<IFormSignup> = (data: IFormSignup) => {
-    dispatch(setAuth({ name: data.name, email: data.email }));
-    navigate("/dashboard");
-    // Naviga;
+    dispatch(signupUser({ email: data.email, password: data.password, name: data.name })).then(res => {
+      setValue(res.payload);
+      navigate("/dashboard");
+    }, (err) => {
+    })
   };
 
   console.log("auth", auth);
@@ -43,6 +49,7 @@ function Signup() {
       : "Email should be valid";
   return (
     <Container>
+      {auth.loading}
       <Title>SIGN UP</Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Input
@@ -81,7 +88,7 @@ function Signup() {
           register={register}
           validations={{ required: "Confirm password is required" }}
         />
-        <StyledButton disabled={!isValid}>Submit</StyledButton>
+        <StyledButton disabled={!isValid | auth.loading}>{auth.loading ? 'Loading...' : 'Submit'}</StyledButton>
       </form>
     </Container>
   );

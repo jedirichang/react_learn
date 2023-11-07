@@ -13,5 +13,9 @@ export function useLocalStorageState(initialState, key) {
     [value, key]
   );
 
+  const getParsedValue = (key: Key) => {
+    return JSON.parsed(localStorage.getItem(key));
+  }
+
   return [value, setValue];
 }
