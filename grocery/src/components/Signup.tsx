@@ -1,8 +1,10 @@
 import { styled } from "styled-components";
+import { useNavigate } from "react-router-dom";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
+import { setAuth } from "../store/auth.store";
 
 interface IFormSignup {
   email: string;
@@ -16,13 +18,21 @@ function Signup() {
     register,
     handleSubmit,
     formState: { isValid, errors },
-  } = useForm<IFormSignup>({ mode: 'onTouched' });
+  } = useForm<IFormSignup>({ mode: "onTouched" });
+
+  const auth = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
+
   console.log(errors);
   const onSubmit: SubmitHandler<IFormSignup> = (data: IFormSignup) => {
-    console.log(data);
-    toast.success('Signed up');
-  }
+    dispatch(setAuth({ name: data.name, email: data.email }));
+    navigate("/dashboard");
+    // Naviga;
+  };
 
+  console.log("auth", auth);
 
   const isValidEmail = (email: string): boolean | string =>
     // eslint-disable-next-line no-useless-escape
@@ -71,7 +81,7 @@ function Signup() {
           register={register}
           validations={{ required: "Confirm password is required" }}
         />
-        <StyledButton disabled={!isValid} buttonText="Submit" />
+        <StyledButton disabled={!isValid}>Submit</StyledButton>
       </form>
     </Container>
   );
