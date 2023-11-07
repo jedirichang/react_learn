@@ -29,7 +29,7 @@ function Input({
         name={name}
         {...register(name, {
           ...validations,
-          onBlur: () => isFocusedValue(false),
+          // onBlur: () => isFocusedValue(false),
         })}
       />
       <StyledError>{error}</StyledError>

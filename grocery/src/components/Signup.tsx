@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
 
 interface IFormSignup {
   email: string;
@@ -15,10 +16,13 @@ function Signup() {
     register,
     handleSubmit,
     formState: { isValid, errors },
-  } = useForm<IFormSignup>();
+  } = useForm<IFormSignup>({ mode: 'onTouched' });
   console.log(errors);
-  const onSubmit: SubmitHandler<IFormSignup> = (data: IFormSignup) =>
+  const onSubmit: SubmitHandler<IFormSignup> = (data: IFormSignup) => {
     console.log(data);
+    toast.success('Signed up');
+  }
+
 
   const isValidEmail = (email: string): boolean | string =>
     // eslint-disable-next-line no-useless-escape
