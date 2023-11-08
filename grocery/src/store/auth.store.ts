@@ -4,6 +4,7 @@ import { RootState } from "./store";
 import { auth } from "../services/firebase";
 import { beforeAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth";
 import { useLocalStorageState } from '../hooks/localStorage.hook';
+import { FirebaseError } from "firebase/app";
 
 export interface AuthData {
   displayName: string;
@@ -29,14 +30,23 @@ const initialState: AuthState = {
   userInfo: null
 }
 
-export const signupUser = createAsyncThunk('signupUser', async (authData: AuthPayload) => {
-  const res = await createUserWithEmailAndPassword(auth, authData.email, authData?.password);
-  const serializedUser: AuthData = {
-    displayName: res.user.displayName as string,
-    email: res.user.email as string,
-    accessToken: res.user['stsTokenManager'].accessToken,
+export const signupUser = createAsyncThunk('signupUser', async (authData: AuthPayload, thunkApi) => {
+  try {
+    const res = await createUserWithEmailAndPassword(auth, authData.email, authData?.password);
+
+    const serializedUser: AuthData = {
+      displayName: res.user.displayName as string,
+      email: res.user.email as string,
+      accessToken: res.user['stsTokenManager'].accessToken,
+    }
+    return serializedUser;
   }
-  return serializedUser;
+  catch (e: FirebaseError) {
+    if (e.code === 'auth/email-already-in-use') {
+      thunkApi.rejectWithValue({ error: 'Email already in use!' });
+    }
+    return thunkApi.rejectWithValue({ error: e });
+  }
 })
 
 export const authSlice = createSlice({
@@ -45,7 +55,6 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(signupUser.fulfilled, (state, action) => {
-      debugger;
       const userInfo: AuthData = {
         displayName: action.payload.displayName,
         accessToken: action.payload.accessToken,

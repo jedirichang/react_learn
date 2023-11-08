@@ -1,10 +1,12 @@
+import { useEffect } from 'react'
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
-import { AuthState, signupUser } from "../store/auth.store";
+import { signupUser } from "../store/auth.store";
+import { toast } from 'react-toastify';
 import { useLocalStorageState } from "../hooks/localStorage.hook";
 
 interface IFormSignup {
@@ -21,24 +23,31 @@ function Signup() {
     formState: { isValid, errors },
   } = useForm<IFormSignup>({ mode: "onTouched" });
 
-  const auth: AuthState = useAppSelector((state) => state.auth);
+  const { userInfo, error, loading } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
-  const { setValue } = useLocalStorageState(auth.userInfo, 'auth');
+  const { setValue } = useLocalStorageState(userInfo, 'auth');
 
+
+
+  useEffect(() => {
+    if (userInfo) {
+      setValue(userInfo);
+      navigate("/dashboard");
+    }
+
+    if (error) {
+      if (error.error.code === 'auth/email-already-in-use')
+        toast.error('Email already in use');
+    }
+  }, [error, userInfo, navigate, setValue])
 
   console.log(errors);
   const onSubmit: SubmitHandler<IFormSignup> = (data: IFormSignup) => {
-    dispatch(signupUser({ email: data.email, password: data.password, name: data.name })).then(res => {
-      setValue(res.payload);
-      navigate("/dashboard");
-    }, (err) => {
-    })
+    dispatch(signupUser({ email: data.email, password: data.password, name: data.name }))
   };
-
-  console.log("auth", auth);
 
   const isValidEmail = (email: string): boolean | string =>
     // eslint-disable-next-line no-useless-escape
@@ -49,7 +58,7 @@ function Signup() {
       : "Email should be valid";
   return (
     <Container>
-      {auth.loading}
+      {loading}
       <Title>SIGN UP</Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Input
@@ -88,7 +97,7 @@ function Signup() {
           register={register}
           validations={{ required: "Confirm password is required" }}
         />
-        <StyledButton disabled={!isValid | auth.loading}>{auth.loading ? 'Loading...' : 'Submit'}</StyledButton>
+        <StyledButton disabled={!isValid | loading}>{loading ? 'Loading...' : 'Submit'}</StyledButton>
       </form>
     </Container>
   );
